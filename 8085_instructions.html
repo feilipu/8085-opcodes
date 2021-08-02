@@ -536,8 +536,8 @@
           <td axis="------|1|12|The current pc value plus one is pushed onto the stack, then pc is loaded with 10h." class="">rst 10h</td>
           <td axis="------|1|12/6|If condition cc is true, the top stack entry is popped into pc." class="">ret c</td>
           <td class="un" axis="------|1|10|Loads hl into the memory location pointed to by de." class="">ld (de), hl</td>
-          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp c,**</td>
-          <td axis="------|2|10/7|A byte from port * is written to a." class="">in a,(*)</td>
+          <td axis="------|3|10/7|If condition cc is true, ** is copied to pc." class="">jp c,**</td>
+          <td axis="------|2|10|A byte from port * is written to a." class="">in a,(*)</td>
           <td axis="------|3|18/9|If condition cc is true, the current pc value plus three is pushed onto the stack, then pc is loaded with **." class="">call c,**</td>
           <td class="un" axis="------|3|10/7|If condition cc is true, ** is copied to pc." class="">jp nk,**</td>
           <td axis="++V+++|2|7|Subtracts * and the carry flag from a." class="">sbc a,*</td>
@@ -554,7 +554,7 @@
           <td axis="00P1++|2|7|Bitwise AND on a with *." class="">and *</td>
           <td axis="------|1|12|The current pc value plus one is pushed onto the stack, then pc is loaded with 20h." class="">rst 20h</td>
           <td axis="------|1|12/6|If condition cc is true, the top stack entry is popped into pc." class="">ret pe</td>
-          <td axis="------|1|4|Loads the value of hl into pc." class="">jp (hl)</td>
+          <td axis="------|1|6|Loads the value of hl into pc." class="">jp (hl)</td>
           <td axis="------|3|10/7|If condition cc is true, ** is copied to pc." class="">jp pe,**</td>
           <td axis="------|1|4|Exchanges the 16-bit contents of de and hl." class="">ex de,hl</td>
           <td axis="------|3|18/9|If condition cc is true, the current pc value plus three is pushed onto the stack, then pc is loaded with **." class="">call pe,**</td>
