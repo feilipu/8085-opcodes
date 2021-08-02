@@ -1,0 +1,589 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>8085 instruction set</title>
+    
+    <style type="text/css">
+      body > div {
+        width: 960px;
+        margin: 0 auto 200px auto;
+        font-family: Verdana;
+        font-size: 24px;
+      }
+      form {
+        margin-top: 2em;
+        font-size: 0.6em;
+      }
+      form span {
+        display: inline-block;
+        position: relative;
+        top: -0.5em;
+      }
+      #search {
+        font-size: 1em;
+        font-family: Verdana;
+        width: 640px;
+      }
+      h3, p {
+        text-align: center;
+      }
+      table {
+        table-layout: fixed;
+        width: 960px;
+      }
+      table, .tooltip {
+        font-size: 0.5em;
+      }
+      th {
+        color: #999;
+      }
+      tr:first-child {
+        height: 2em;
+      }
+      td {
+        font-family: "Courier New", Courier;
+        font-weight: bold;
+        background-color: #ccc;
+        color: #333;
+        padding: 6px;
+        word-wrap: break-word;
+      }
+      .un {
+        background-color: #f66;
+      }
+      .ln {
+        padding: 0;
+      }
+      .hr {
+        background-color: #000;
+        color: #666;
+      }
+      th, .bk {
+        background-color: #333;
+      }
+      .hd, td:hover, td a {
+        background-color: #999;
+        color: #000;
+      }
+      td:first-child {
+        width: 1em;
+        background-color: transparent;
+      }
+      td a {
+        display: block;
+        padding: 6px;
+        font-family: Verdana;
+        text-align: center;
+      }
+      td a:hover, .tooltip {
+        background-color: #fff;
+        text-decoration: none;
+      }
+      .tooltip {
+        position: absolute;
+        width: 160px;
+        border: 3px solid #000;
+        padding: 6px;
+      }
+      #banner {
+        position: fixed;
+        top: 0;
+        right: 50%;
+        z-index: 9;
+        width: 200px;
+        margin-right: -420px;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      #banner > a {
+        display: block;
+        border: 2px solid #aa8;
+        border-top: 0;
+        padding: 8px 4px;
+        background: #cca;
+        color: #331;
+        text-decoration: none;
+        text-align: center;
+        font-style: italic;
+        -webkit-transition: background-color 200ms;
+        -o-transition: background-color 200ms;
+        -ms-transition: background-color 200ms;
+        -moz-transition: background-color 200ms;
+        transition: background-color 200ms;
+      }
+      #banner > a:hover {
+        background: #eec;
+      }
+      #banner span {
+        display: block;
+        font-size: 0.6em;
+      }
+      #banner img {
+        display: block;
+        width: 100%;
+        border: 0;
+      }
+      #banner cite {
+        display: block;
+        padding: 4px 8px;
+        background: #aa8;
+        color: #ddc;
+        font-style: normal;
+      }
+      #banner cite img {
+        float: right;
+        width: 96px;
+        opacity: 0.4;
+        -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=40)';
+        filter: alpha(opacity=40);
+        -webkit-transition: opacity 200ms;
+        -o-transition: opacity 200ms;
+        -ms-transition: opacity 200ms;
+        -moz-transition: opacity 200ms;
+        transition: opacity 200ms;
+      }
+      #banner cite a:hover img {
+        opacity: 0.1;
+        -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=10)';
+        filter: alpha(opacity=10);
+      }
+    </style>
+    <script type="text/javascript" async="" src="./8085_instructions_files/ga.js"></script>
+    <script type="text/javascript" src="./8085_instructions_files/jquery.js"></script>
+    <script type="text/javascript">// <![CDATA[
+      function rehash() {
+        window.location.hash = $('#search').val();
+      }
+
+      function hashchange() {
+        var hash = window.decodeURIComponent(window.location.hash).slice(1);
+
+        if (hash != $('#search').val()) {
+          $('#search').val(hash);
+        }
+
+        $('td').each(function() {
+          if ($(this).text().indexOf(hash) == -1) {
+            $(this).addClass('bk');
+          } else {
+            $(this).removeClass('bk');
+          }
+        });
+      }
+
+      function detip() {
+        $('.tooltip').remove();
+      }
+
+      $(function() {
+        var keyup = 0;
+
+        $('th').hover(function() {
+          $(this).addClass('hr');
+          ($(this).index() ? $(this).parent().parent().find('td:nth-child(' + ($(this).index() + 1).toString() + ')') : $(this).siblings()).addClass('hd');
+        }, function() {
+          $(this).removeClass('hr');
+          ($(this).index() ? $(this).parent().parent().find('td:nth-child(' + ($(this).index() + 1).toString() + ')') : $(this).siblings()).removeClass('hd');
+        });
+
+        $('#search').keyup(function(e) {
+          clearTimeout(keyup);
+          keyup = setTimeout(rehash, 400);
+        });
+
+        $('a').click(function() {
+          $(window).scrollTop($($(this).attr('href')).position().top);
+          return false;
+        });
+
+        $('td:not(:has(\'a\')):not(:first-child)').mouseover(function(e) {
+          var desc = '';
+          var val = $(this).attr('axis').split('|');
+          var flags = ['C', 'N', 'P/V', 'H', 'Z', 'S'];
+
+          for (i = 0; i < 6; i++) {
+            desc += '<br><b>' + flags[i] + ':</b> ';
+
+            switch (val[0].charAt(i)) {
+              case '-':
+                desc += 'unaffected';
+                break;
+              case '+':
+                desc += 'affected as defined';
+                break;
+              case 'P':
+                desc += 'detects parity';
+                break;
+              case 'V':
+                desc += 'detects overflow';
+                break;
+              case '1':
+                desc += 'set';
+                break;
+              case '0':
+                desc += 'reset';
+                break;
+              case '*':
+                desc += 'exceptional';
+                break;
+              default:
+                desc += 'unknown';
+            }
+          }
+
+          detip();
+          $('<div class="tooltip"><b>Opcode:</b> ' + $(this).closest('table').attr('title') + '0123456789ABCDEF'.charAt($(this).parent().index() - 1) + '0123456789ABCDEF'.charAt($(this).index() - 1) + '<br><b>Size (bytes):</b> ' + val[1] + '<br><b>Time (clock cycles):</b> ' + val[2] + desc + '<br>' + val[3] + '</div>').css({'left': e.pageX + 10, 'top': e.pageY + 20}).appendTo('body > div');
+        }).mousemove(function(e) {
+          $('.tooltip').css({'left': e.pageX + 10, 'top': e.pageY + 20});
+        });
+
+        $('#banner').mouseenter(function() {
+          $(this).stop().animate({top: 0});
+        }).mouseleave(function() {
+          $(this).stop().animate({top: -120});
+        });
+
+        $(window).keydown(function(e) {
+          if (e.keyCode == 191) {
+            $('#search').focus().select();
+            return false;
+          }
+        });
+
+        $('table').mouseout(detip);
+        window.onhashchange = hashchange;
+        hashchange();
+      });
+    // ]]></script>
+  </head>
+  <body>
+    <div>
+      <p>Type here to search: <input type="text" id="search"></p>
+      <h3 id="table1">8085 Instruction Set</h3>
+      <table title="">
+        <tbody><tr>
+          <td class=""></td>
+          <th>0</th>
+          <th>1</th>
+          <th>2</th>
+          <th class="">3</th>
+          <th>4</th>
+          <th class="">5</th>
+          <th>6</th>
+          <th>7</th>
+          <th>8</th>
+          <th>9</th>
+          <th>A</th>
+          <th>B</th>
+          <th>C</th>
+          <th>D</th>
+          <th>E</th>
+          <th>F</th>
+        </tr>
+        <tr>
+          <th>0</th>
+          <td axis="------|1|4|No operation is performed." class="">nop</td>
+          <td axis="------|3|10|Loads ** into bc." class="">ld bc,**</td>
+          <td axis="------|1|7|Stores a into the memory location pointed to by bc." class="">ld (bc),a</td>
+          <td axis="--V---|1|6|Adds one to bc." class="">inc bc</td>
+          <td axis="-+V+++|1|4|Adds one to b." class="">inc b</td>
+          <td axis="-+V+++|1|4|Subtracts one from b." class="">dec b</td>
+          <td axis="------|2|7|Loads * into b." class="">ld b,*</td>
+          <td axis="+0-0--|1|4|The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and bit 0." class="">rlca</td>
+          <td class="un" axis="++++++|1|10|Subtracts the 16-bit contents of bc from hl." class="">sub hl,bc</td>
+          <td axis="++-+--|1|10|The value of bc is added to hl.">add hl,bc</td>
+          <td axis="------|1|7|Loads the value pointed to by bc into a." class="">ld a,(bc)</td>
+          <td axis="------|1|6|Subtracts one from bc." class="">dec bc</td>
+          <td axis="-+V+++|1|4|Adds one to c." class="">inc c</td>
+          <td axis="-+V+++|1|4|Subtracts one from c." class="">dec c</td>
+          <td axis="------|2|7|Loads * into c." class="">ld c,*</td>
+          <td axis="+0-0--|1|4|The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and bit 7." class="">rrca</td>
+        </tr>
+        <tr>
+          <th>1</th>
+          <td class="un" axis="+-----|1|7|The contents of hl are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 15 are unchanged." class="">sra hl</td>
+          <td axis="------|3|10|Loads ** into de." class="">ld de,**</td>
+          <td axis="------|1|7|Stores a into the memory location pointed to by de." class="">ld (de),a</td>
+          <td axis="------|1|6|Adds one to de." class="">inc de</td>
+          <td axis="-+V+++|1|4|Adds one to d." class="">inc d</td>
+          <td axis="-+V+++|1|4|Subtracts one from d." class="">dec d</td>
+          <td axis="------|2|7|Loads * into d." class="">ld d,*</td>
+          <td axis="+0-0--|1|4|The contents of a are rotated left one bit position. The contents of bit 7 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0." class="">rla</td>
+          <td class="un" axis="+-----|1|10|The contents of de are rotated left one bit position. The contents of bit 15 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0." class="">rl de</td>
+          <td axis="++-+--|1|10|The value of de is added to hl.">add hl,de</td>
+          <td axis="------|1|7|Loads the value pointed to by de into a." class="">ld a,(de)</td>
+          <td axis="------|1|6|Subtracts one from de." class="">dec de</td>
+          <td axis="-+V+++|1|4|Adds one to e." class="">inc e</td>
+          <td axis="-+V+++|1|4|Subtracts one from e." class="">dec e</td>
+          <td axis="------|2|7|Loads * into e." class="">ld e,*</td>
+          <td axis="+0-0--|1|4|The contents of a are rotated right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of the carry flag are copied to bit 7." class="">rra</td>
+        </tr>
+        <tr>
+          <th>2</th>
+          <td axis="------|1|4|Loads the interrupt mask and serial input data into a." class="">rim</td>
+          <td axis="------|3|10|Loads ** into hl." class="">ld hl,**</td>
+          <td axis="------|3|16|Stores hl into the memory location pointed to by **." class="">ld (**),hl</td>
+          <td axis="------|1|6|Adds one to hl." class="">inc hl</td>
+          <td axis="-+V+++|1|4|Adds one to h." class="">inc h</td>
+          <td axis="-+V+++|1|4|Subtracts one from h." class="">dec h</td>
+          <td axis="------|2|7|Loads * into h." class="">ld h,*</td>
+          <td axis="*-P*++|1|4|Adjusts a for BCD addition and subtraction operations." class="">daa</td>
+          <td class="un" axis="------|2|10|Loads hl + * into de." class="">ld de,hl+*</td>
+          <td axis="++-+--|1|10|The value of hl is added to hl.">add hl,hl</td>
+          <td axis="------|3|16|Loads the value pointed to by ** into hl." class="">ld hl,(**)</td>
+          <td axis="------|1|6|Subtracts one from hl." class="">dec hl</td>
+          <td axis="-+V+++|1|4|Adds one to l." class="">inc l</td>
+          <td axis="-+V+++|1|4|Subtracts one from l." class="">dec l</td>
+          <td axis="------|2|7|Loads * into l." class="">ld l,*</td>
+          <td axis="-1-1--|1|4|The contents of a are inverted (one&#39;s complement)." class="">cpl</td>
+        </tr>
+        <tr>
+          <th>3</th>
+          <td axis="------|1|4|Load a into the interrupt mask and serial output data." class="">sim</td>
+          <td axis="------|3|10|Loads ** into sp." class="">ld sp,**</td>
+          <td axis="------|3|13|Stores a into the memory location pointed to by **." class="">ld (**),a</td>
+          <td axis="------|1|6|Adds one to sp." class="">inc sp</td>
+          <td axis="-+V+++|1|10|Adds one to (hl)." class="">inc (hl)</td>
+          <td axis="-+V+++|1|10|Subtracts one from (hl)." class="">dec (hl)</td>
+          <td axis="------|2|10|Loads * into (hl)." class="">ld (hl),*</td>
+          <td axis="10-0--|1|4|Sets the carry flag." class="">scf</td>
+          <td class="un" axis="------|2|10|Loads sp + * into de" class="">ld de,sp+*</td>
+          <td axis="++-+--|1|10|The value of sp is added to hl.">add hl,sp</td>
+          <td axis="------|3|13|Loads the value pointed to by ** into a." class="">ld a,(**)</td>
+          <td axis="------|1|6|Subtracts one from sp." class="">dec sp</td>
+          <td axis="-+V+++|1|4|Adds one to a." class="">inc a</td>
+          <td axis="-+V+++|1|4|Subtracts one from a." class="">dec a</td>
+          <td axis="------|2|7|Loads * into a." class="">ld a,*</td>
+          <td axis="*0-*--|1|4|Inverts the carry flag." class="">ccf</td>
+        </tr>
+        <tr>
+          <th>4</th>
+          <td axis="------|1|4|The contents of b are loaded into b." class="">ld b,b</td>
+          <td axis="------|1|4|The contents of c are loaded into b." class="">ld b,c</td>
+          <td axis="------|1|4|The contents of d are loaded into b." class="">ld b,d</td>
+          <td axis="------|1|4|The contents of e are loaded into b." class="">ld b,e</td>
+          <td axis="------|1|4|The contents of h are loaded into b." class="">ld b,h</td>
+          <td axis="------|1|4|The contents of l are loaded into b." class="">ld b,l</td>
+          <td axis="------|1|7|The contents of (hl) are loaded into b." class="">ld b,(hl)</td>
+          <td axis="------|1|4|The contents of a are loaded into b." class="">ld b,a</td>
+          <td axis="------|1|4|The contents of b are loaded into c." class="">ld c,b</td>
+          <td axis="------|1|4|The contents of c are loaded into c." class="">ld c,c</td>
+          <td axis="------|1|4|The contents of d are loaded into c." class="">ld c,d</td>
+          <td axis="------|1|4|The contents of e are loaded into c." class="">ld c,e</td>
+          <td axis="------|1|4|The contents of h are loaded into c." class="">ld c,h</td>
+          <td axis="------|1|4|The contents of l are loaded into c." class="">ld c,l</td>
+          <td axis="------|1|7|The contents of (hl) are loaded into c." class="">ld c,(hl)</td>
+          <td axis="------|1|4|The contents of a are loaded into c." class="">ld c,a</td>
+        </tr>
+        <tr>
+          <th>5</th>
+          <td axis="------|1|4|The contents of b are loaded into d." class="">ld d,b</td>
+          <td axis="------|1|4|The contents of c are loaded into d." class="">ld d,c</td>
+          <td axis="------|1|4|The contents of d are loaded into d." class="">ld d,d</td>
+          <td axis="------|1|4|The contents of e are loaded into d." class="">ld d,e</td>
+          <td axis="------|1|4|The contents of h are loaded into d." class="">ld d,h</td>
+          <td axis="------|1|4|The contents of l are loaded into d." class="">ld d,l</td>
+          <td axis="------|1|7|The contents of (hl) are loaded into d." class="">ld d,(hl)</td>
+          <td axis="------|1|4|The contents of a are loaded into d." class="">ld d,a</td>
+          <td axis="------|1|4|The contents of b are loaded into e." class="">ld e,b</td>
+          <td axis="------|1|4|The contents of c are loaded into e." class="">ld e,c</td>
+          <td axis="------|1|4|The contents of d are loaded into e." class="">ld e,d</td>
+          <td axis="------|1|4|The contents of e are loaded into e." class="">ld e,e</td>
+          <td axis="------|1|4|The contents of h are loaded into e." class="">ld e,h</td>
+          <td axis="------|1|4|The contents of l are loaded into e." class="">ld e,l</td>
+          <td axis="------|1|7|The contents of (hl) are loaded into e." class="">ld e,(hl)</td>
+          <td axis="------|1|4|The contents of a are loaded into e." class="">ld e,a</td>
+        </tr>
+        <tr>
+          <th>6</th>
+          <td axis="------|1|4|The contents of b are loaded into h." class="">ld h,b</td>
+          <td axis="------|1|4|The contents of c are loaded into h." class="">ld h,c</td>
+          <td axis="------|1|4|The contents of d are loaded into h." class="">ld h,d</td>
+          <td axis="------|1|4|The contents of e are loaded into h." class="">ld h,e</td>
+          <td axis="------|1|4|The contents of h are loaded into h." class="">ld h,h</td>
+          <td axis="------|1|4|The contents of l are loaded into h." class="">ld h,l</td>
+          <td axis="------|1|7|The contents of (hl) are loaded into h." class="">ld h,(hl)</td>
+          <td axis="------|1|4|The contents of a are loaded into h." class="">ld h,a</td>
+          <td axis="------|1|4|The contents of b are loaded into l." class="">ld l,b</td>
+          <td axis="------|1|4|The contents of c are loaded into l." class="">ld l,c</td>
+          <td axis="------|1|4|The contents of d are loaded into l." class="">ld l,d</td>
+          <td axis="------|1|4|The contents of e are loaded into l." class="">ld l,e</td>
+          <td axis="------|1|4|The contents of h are loaded into l." class="">ld l,h</td>
+          <td axis="------|1|4|The contents of l are loaded into l." class="">ld l,l</td>
+          <td axis="------|1|7|The contents of (hl) are loaded into l." class="">ld l,(hl)</td>
+          <td axis="------|1|4|The contents of a are loaded into l." class="">ld l,a</td>
+        </tr>
+        <tr>
+          <th>7</th>
+          <td axis="------|1|7|The contents of b are loaded into (hl)." class="">ld (hl),b</td>
+          <td axis="------|1|7|The contents of c are loaded into (hl)." class="">ld (hl),c</td>
+          <td axis="------|1|7|The contents of d are loaded into (hl)." class="">ld (hl),d</td>
+          <td axis="------|1|7|The contents of e are loaded into (hl)." class="">ld (hl),e</td>
+          <td axis="------|1|7|The contents of h are loaded into (hl)." class="">ld (hl),h</td>
+          <td axis="------|1|7|The contents of l are loaded into (hl)." class="">ld (hl),l</td>
+          <td axis="------|1|4|Suspends CPU operation until an interrupt or reset occurs." class="">halt</td>
+          <td axis="------|1|7|The contents of a are loaded into (hl)." class="">ld (hl),a</td>
+          <td axis="------|1|4|The contents of b are loaded into a." class="">ld a,b</td>
+          <td axis="------|1|4|The contents of c are loaded into a." class="">ld a,c</td>
+          <td axis="------|1|4|The contents of d are loaded into a." class="">ld a,d</td>
+          <td axis="------|1|4|The contents of e are loaded into a." class="">ld a,e</td>
+          <td axis="------|1|4|The contents of h are loaded into a." class="">ld a,h</td>
+          <td axis="------|1|4|The contents of l are loaded into a." class="">ld a,l</td>
+          <td axis="------|1|7|The contents of (hl) are loaded into a." class="">ld a,(hl)</td>
+          <td axis="------|1|4|The contents of a are loaded into a." class="">ld a,a</td>
+        </tr>
+        <tr>
+          <th>8</th>
+          <td axis="++V+++|1|4|Adds b to a.">add a,b</td>
+          <td axis="++V+++|1|4|Adds c to a.">add a,c</td>
+          <td axis="++V+++|1|4|Adds d to a.">add a,d</td>
+          <td axis="++V+++|1|4|Adds e to a." class="">add a,e</td>
+          <td axis="++V+++|1|4|Adds h to a.">add a,h</td>
+          <td axis="++V+++|1|4|Adds l to a." class="">add a,l</td>
+          <td axis="++V+++|1|7|Adds (hl) to a.">add a,(hl)</td>
+          <td axis="++V+++|1|4|Adds a to a.">add a,a</td>
+          <td axis="++V+++|1|4|Adds b and the carry flag to a." class="">adc a,b</td>
+          <td axis="++V+++|1|4|Adds c and the carry flag to a." class="">adc a,c</td>
+          <td axis="++V+++|1|4|Adds d and the carry flag to a." class="">adc a,d</td>
+          <td axis="++V+++|1|4|Adds e and the carry flag to a." class="">adc a,e</td>
+          <td axis="++V+++|1|4|Adds h and the carry flag to a." class="">adc a,h</td>
+          <td axis="++V+++|1|4|Adds l and the carry flag to a." class="">adc a,l</td>
+          <td axis="++V+++|1|7|Adds (hl) and the carry flag to a." class="">adc a,(hl)</td>
+          <td axis="++V+++|1|4|Adds a and the carry flag to a." class="">adc a,a</td>
+        </tr>
+        <tr>
+          <th>9</th>
+          <td axis="++V+++|1|4|Subtracts b from a." class="">sub b</td>
+          <td axis="++V+++|1|4|Subtracts c from a." class="">sub c</td>
+          <td axis="++V+++|1|4|Subtracts d from a." class="">sub d</td>
+          <td axis="++V+++|1|4|Subtracts e from a." class="">sub e</td>
+          <td axis="++V+++|1|4|Subtracts h from a." class="">sub h</td>
+          <td axis="++V+++|1|4|Subtracts l from a." class="">sub l</td>
+          <td axis="++V+++|1|7|Subtracts (hl) from a." class="">sub (hl)</td>
+          <td axis="++V+++|1|4|Subtracts a from a." class="">sub a</td>
+          <td axis="++V+++|1|4|Subtracts b and the carry flag from a." class="">sbc a,b</td>
+          <td axis="++V+++|1|4|Subtracts c and the carry flag from a." class="">sbc a,c</td>
+          <td axis="++V+++|1|4|Subtracts d and the carry flag from a." class="">sbc a,d</td>
+          <td axis="++V+++|1|4|Subtracts e and the carry flag from a." class="">sbc a,e</td>
+          <td axis="++V+++|1|4|Subtracts h and the carry flag from a." class="">sbc a,h</td>
+          <td axis="++V+++|1|4|Subtracts l and the carry flag from a." class="">sbc a,l</td>
+          <td axis="++V+++|1|7|Subtracts (hl) and the carry flag from a." class="">sbc a,(hl)</td>
+          <td axis="++V+++|1|4|Subtracts a and the carry flag from a." class="">sbc a,a</td>
+        </tr>
+        <tr>
+          <th>A</th>
+          <td axis="00P1++|1|4|Bitwise AND on a with b." class="">and b</td>
+          <td axis="00P1++|1|4|Bitwise AND on a with c." class="">and c</td>
+          <td axis="00P1++|1|4|Bitwise AND on a with d." class="">and d</td>
+          <td axis="00P1++|1|4|Bitwise AND on a with e." class="">and e</td>
+          <td axis="00P1++|1|4|Bitwise AND on a with h." class="">and h</td>
+          <td axis="00P1++|1|4|Bitwise AND on a with l." class="">and l</td>
+          <td axis="00P1++|1|7|Bitwise AND on a with (hl)." class="">and (hl)</td>
+          <td axis="00P1++|1|4|Bitwise AND on a with a." class="">and a</td>
+          <td axis="00P0++|1|4|Bitwise XOR on a with b." class="">xor b</td>
+          <td axis="00P0++|1|4|Bitwise XOR on a with c." class="">xor c</td>
+          <td axis="00P0++|1|4|Bitwise XOR on a with d." class="">xor d</td>
+          <td axis="00P0++|1|4|Bitwise XOR on a with e." class="">xor e</td>
+          <td axis="00P0++|1|4|Bitwise XOR on a with h." class="">xor h</td>
+          <td axis="00P0++|1|4|Bitwise XOR on a with l." class="">xor l</td>
+          <td axis="00P0++|1|7|Bitwise XOR on a with (hl)." class="">xor (hl)</td>
+          <td axis="00P0++|1|4|Bitwise XOR on a with a." class="">xor a</td>
+        </tr>
+        <tr>
+          <th>B</th>
+          <td axis="00P0++|1|4|Bitwise OR on a with b." class="">or b</td>
+          <td axis="00P0++|1|4|Bitwise OR on a with c." class="">or c</td>
+          <td axis="00P0++|1|4|Bitwise OR on a with d." class="">or d</td>
+          <td axis="00P0++|1|4|Bitwise OR on a with e." class="">or e</td>
+          <td axis="00P0++|1|4|Bitwise OR on a with h." class="">or h</td>
+          <td axis="00P0++|1|4|Bitwise OR on a with l." class="">or l</td>
+          <td axis="00P0++|1|7|Bitwise OR on a with (hl)." class="">or (hl)</td>
+          <td axis="00P0++|1|4|Bitwise OR on a with a." class="">or a</td>
+          <td axis="++V+++|1|4|Subtracts b from a and affects flags according to the result. a is not modified." class="">cp b</td>
+          <td axis="++V+++|1|4|Subtracts c from a and affects flags according to the result. a is not modified." class="">cp c</td>
+          <td axis="++V+++|1|4|Subtracts d from a and affects flags according to the result. a is not modified." class="">cp d</td>
+          <td axis="++V+++|1|4|Subtracts e from a and affects flags according to the result. a is not modified." class="">cp e</td>
+          <td axis="++V+++|1|4|Subtracts h from a and affects flags according to the result. a is not modified." class="">cp h</td>
+          <td axis="++V+++|1|4|Subtracts l from a and affects flags according to the result. a is not modified." class="">cp l</td>
+          <td axis="++V+++|1|7|Subtracts (hl) from a and affects flags according to the result. a is not modified." class="">cp (hl)</td>
+          <td axis="++V+++|1|4|Subtracts a from a and affects flags according to the result. a is not modified." class="">cp a</td>
+        </tr>
+        <tr>
+          <th>C</th>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret nz</td>
+          <td axis="------|1|10|The memory location pointed to by sp is stored into c and sp is incremented. The memory location pointed to by sp is stored into b and sp is incremented again." class="">pop bc</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp nz,**</td>
+          <td axis="------|3|10|** is copied to pc." class="">jp **</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call nz,**</td>
+          <td axis="------|1|11|sp is decremented and b is stored into the memory location pointed to by sp. sp is decremented again and c is stored into the memory location pointed to by sp." class="">push bc</td>
+          <td axis="++V+++|2|7|Adds * to a.">add a,*</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 00h." class="">rst 00h</td>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret z</td>
+          <td axis="------|1|10|The top stack entry is popped into pc." class="">ret</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp z,**</td>
+          <td class="un" axis="------|1|12/6|If condition overflow is true, current pc value plus one is pushed onto the stack, then is loaded with 40h.">rst v</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call z,**</td>
+          <td axis="------|3|17|The current pc value plus three is pushed onto the stack, then is loaded with **." class="">call **</td>
+          <td axis="++V+++|2|7|Adds * and the carry flag to a." class="">adc a,*</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 08h." class="">rst 08h</td>
+        </tr>
+        <tr>
+          <th>D</th>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret nc</td>
+          <td axis="------|1|10|The memory location pointed to by sp is stored into e and sp is incremented. The memory location pointed to by sp is stored into d and sp is incremented again." class="">pop de</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp nc,**</td>
+          <td axis="------|2|11|The value of a is written to port *." class="">out (*),a</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call nc,**</td>
+          <td axis="------|1|11|sp is decremented and d is stored into the memory location pointed to by sp. sp is decremented again and e is stored into the memory location pointed to by sp." class="">push de</td>
+          <td axis="++V+++|2|7|Subtracts * from a." class="">sub *</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 10h." class="">rst 10h</td>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret c</td>
+          <td class="un" axis="------|1|10|Loads hl into the memory location pointed to by de." class="">ld (de),hl</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp c,**</td>
+          <td axis="------|2|11|A byte from port * is written to a." class="">in a,(*)</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call c,**</td>
+          <td class="un" axis="------|3|10/7|If condition cc is true, ** is copied to pc." class="">jp nk,**</td>
+          <td axis="++V+++|2|7|Subtracts * and the carry flag from a." class="">sbc a,*</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 18h." class="">rst 18h</td>
+        </tr>
+        <tr>
+          <th>E</th>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret po</td>
+          <td axis="------|1|10|The memory location pointed to by sp is stored into l and sp is incremented. The memory location pointed to by sp is stored into h and sp is incremented again." class="">pop hl</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp po,**</td>
+          <td axis="------|1|19|Exchanges (sp) with l, and (sp+1) with h." class="">ex (sp),hl</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call po,**</td>
+          <td axis="------|1|11|sp is decremented and h is stored into the memory location pointed to by sp. sp is decremented again and l is stored into the memory location pointed to by sp." class="">push hl</td>
+          <td axis="00P1++|2|7|Bitwise AND on a with *." class="">and *</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 20h." class="">rst 20h</td>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret pe</td>
+          <td axis="------|1|4|Loads the value of hl into pc." class="">jp (hl)</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp pe,**</td>
+          <td axis="------|1|4|Exchanges the 16-bit contents of de and hl." class="">ex de,hl</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call pe,**</td>
+          <td class="un" axis="------|1|10|Loads the value pointed to by de into hl." class="">ld hl,(de)</td>
+          <td axis="00P0++|2|7|Bitwise XOR on a with *." class="">xor *</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 28h." class="">rst 28h</td>
+        </tr>
+        <tr>
+          <th>F</th>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret p</td>
+          <td axis="------|1|10|The memory location pointed to by sp is stored into f and sp is incremented. The memory location pointed to by sp is stored into a and sp is incremented again." class="">pop af</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp p,**</td>
+          <td axis="------|1|4|Resets both interrupt flip-flops, thus prenting maskable interrupts from triggering." class="">di</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call p,**</td>
+          <td axis="------|1|11|sp is decremented and a is stored into the memory location pointed to by sp. sp is decremented again and f is stored into the memory location pointed to by sp." class="">push af</td>
+          <td axis="00P0++|2|7|Bitwise OR on a with *." class="">or *</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 30h." class="">rst 30h</td>
+          <td axis="------|1|11/5|If condition cc is true, the top stack entry is popped into pc." class="">ret m</td>
+          <td axis="------|1|6|Loads the value of hl into sp." class="">ld sp,hl</td>
+          <td axis="------|3|10|If condition cc is true, ** is copied to pc." class="">jp m,**</td>
+          <td axis="------|1|4|Sets both interrupt flip-flops, thus allowing maskable interrupts to occur. An interrupt will not occur until after the immediatedly following instruction." class="">ei</td>
+          <td axis="------|3|17/10|If condition cc is true, the current pc value plus three is pushed onto the stack, then is loaded with **." class="">call m,**</td>
+          <td class="un" axis="------|3|10/7|If condition cc is true, ** is copied to pc." class="">jp k,**</td>
+          <td axis="++V+++|2|7|Subtracts * from a and affects flags according to the result. a is not modified." class="">cp *</td>
+          <td axis="------|1|11|The current pc value plus one is pushed onto the stack, then is loaded with 38h." class="">rst 38h</td>
+        </tr>
+      </tbody></table>
+    <div class="tooltip" style="left: 668px; top: 508px;"><b>Opcode:</b> 5A<br><b>Size (bytes):</b> 1<br><b>Time (clock cycles):</b> 4<br><b>C:</b> unaffected<br><b>N:</b> unaffected<br><b>P/V:</b> unaffected<br><b>H:</b> unaffected<br><b>Z:</b> unaffected<br><b>S:</b> unaffected<br>The contents of d are loaded into e.</div></div>
+  
+
+</body></html>
