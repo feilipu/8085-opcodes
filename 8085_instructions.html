@@ -290,7 +290,7 @@
           <td class="un" axis="++++++|1|10|Subtracts the 16-bit contents of bc from hl." class="">sub hl,bc</td>
           <td axis="++-+--|1|10|The value of bc is added to hl.">add hl,bc</td>
           <td axis="------|1|7|Loads the value pointed to by bc into a." class="">ld a,(bc)</td>
-          <td axis="------|1|6|Subtracts one from bc." class="">dec bc</td>
+          <td axis="--V---|1|6|Subtracts one from bc." class="">dec bc</td>
           <td axis="-+V+++|1|4|Adds one to c." class="">inc c</td>
           <td axis="-+V+++|1|4|Subtracts one from c." class="">dec c</td>
           <td axis="------|2|7|Loads * into c." class="">ld c,*</td>
@@ -301,7 +301,7 @@
           <td class="un" axis="+-----|1|7|The contents of hl are shifted right one bit position. The contents of bit 0 are copied to the carry flag and the previous contents of bit 15 are unchanged." class="">sra hl</td>
           <td axis="------|3|10|Loads ** into de." class="">ld de,**</td>
           <td axis="------|1|7|Stores a into the memory location pointed to by de." class="">ld (de),a</td>
-          <td axis="------|1|6|Adds one to de." class="">inc de</td>
+          <td axis="--V---|1|6|Adds one to de." class="">inc de</td>
           <td axis="-+V+++|1|4|Adds one to d." class="">inc d</td>
           <td axis="-+V+++|1|4|Subtracts one from d." class="">dec d</td>
           <td axis="------|2|7|Loads * into d." class="">ld d,*</td>
@@ -309,7 +309,7 @@
           <td class="un" axis="+-----|1|10|The contents of de are rotated left one bit position. The contents of bit 15 are copied to the carry flag and the previous contents of the carry flag are copied to bit 0." class="">rl de</td>
           <td axis="++-+--|1|10|The value of de is added to hl.">add hl,de</td>
           <td axis="------|1|7|Loads the value pointed to by de into a." class="">ld a,(de)</td>
-          <td axis="------|1|6|Subtracts one from de." class="">dec de</td>
+          <td axis="--V---|1|6|Subtracts one from de." class="">dec de</td>
           <td axis="-+V+++|1|4|Adds one to e." class="">inc e</td>
           <td axis="-+V+++|1|4|Subtracts one from e." class="">dec e</td>
           <td axis="------|2|7|Loads * into e." class="">ld e,*</td>
@@ -320,7 +320,7 @@
           <td axis="------|1|4|Loads the interrupt mask and serial input data register into a." class="">rim</td>
           <td axis="------|3|10|Loads ** into hl." class="">ld hl,**</td>
           <td axis="------|3|16|Stores hl into the memory location pointed to by **." class="">ld (**),hl</td>
-          <td axis="------|1|6|Adds one to hl." class="">inc hl</td>
+          <td axis="--V---|1|6|Adds one to hl." class="">inc hl</td>
           <td axis="-+V+++|1|4|Adds one to h." class="">inc h</td>
           <td axis="-+V+++|1|4|Subtracts one from h." class="">dec h</td>
           <td axis="------|2|7|Loads * into h." class="">ld h,*</td>
@@ -328,7 +328,7 @@
           <td class="un" axis="------|2|10|Loads hl plus * into de." class="">ld de, hl+*</td>
           <td axis="++-+--|1|10|The value of hl is added to hl.">add hl,hl</td>
           <td axis="------|3|16|Loads the value pointed to by ** into hl." class="">ld hl,(**)</td>
-          <td axis="------|1|6|Subtracts one from hl." class="">dec hl</td>
+          <td axis="--V---|1|6|Subtracts one from hl." class="">dec hl</td>
           <td axis="-+V+++|1|4|Adds one to l." class="">inc l</td>
           <td axis="-+V+++|1|4|Subtracts one from l." class="">dec l</td>
           <td axis="------|2|7|Loads * into l." class="">ld l,*</td>
@@ -339,7 +339,7 @@
           <td axis="------|1|4|Load a into the interrupt mask and serial output data register." class="">sim</td>
           <td axis="------|3|10|Loads ** into sp." class="">ld sp,**</td>
           <td axis="------|3|13|Stores a into the memory location pointed to by **." class="">ld (**),a</td>
-          <td axis="------|1|6|Adds one to sp." class="">inc sp</td>
+          <td axis="--V---|1|6|Adds one to sp." class="">inc sp</td>
           <td axis="-+V+++|1|10|Adds one to (hl)." class="">inc (hl)</td>
           <td axis="-+V+++|1|10|Subtracts one from (hl)." class="">dec (hl)</td>
           <td axis="------|2|10|Loads * into (hl)." class="">ld (hl),*</td>
@@ -347,7 +347,7 @@
           <td class="un" axis="------|2|10|Loads sp plus * into de" class="">ld de, sp+*</td>
           <td axis="++-+--|1|10|The value of sp is added to hl.">add hl,sp</td>
           <td axis="------|3|13|Loads the value pointed to by ** into a." class="">ld a,(**)</td>
-          <td axis="------|1|6|Subtracts one from sp." class="">dec sp</td>
+          <td axis="--V---|1|6|Subtracts one from sp." class="">dec sp</td>
           <td axis="-+V+++|1|4|Adds one to a." class="">inc a</td>
           <td axis="-+V+++|1|4|Subtracts one from a." class="">dec a</td>
           <td axis="------|2|7|Loads * into a." class="">ld a,*</td>
